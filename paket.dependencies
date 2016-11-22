@@ -1,0 +1,8 @@
+framework: >= net45
+source https://nuget.org/api/v2
+
+nuget xunit
+nuget xunit.runner.utility
+nuget xunit.runner.console
+nuget shouldly
+
