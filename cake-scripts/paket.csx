@@ -8,7 +8,7 @@ Task("PaketInstall")
     });
 
 Task("BootstrapPaket")
-    .Descript("Bootstrap Paket...")
+    .Description("Bootstrap Paket...")
     .WithCriteria(!FileExists(".paket/paket.exe"))
     .Does(() => {
         if(StartProcess(".paket/paket.bootstraper.exe") != 0) {
