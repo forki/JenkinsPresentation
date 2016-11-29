@@ -20,6 +20,6 @@ private void Compile(string mode)
     MSBuild("./src/TestProject.sln", settings =>
       settings.SetConfiguration(mode)
         .SetVerbosity(Verbosity.Minimal)
-        .UseToolVersion(MSBuildToolVersion.NET45)
+        .UseToolVersion(MSBuildToolVersion.NET46)
         .WithTarget("Build"));
 }
