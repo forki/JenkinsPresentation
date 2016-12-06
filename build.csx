@@ -1,14 +1,13 @@
-#load "./cake-scripts/paket.csx"
-#load "./cake-scripts/compile.csx"
-#load "./cake-scripts/xunit.csx"
-
+#l "./cake-scripts/paket.cake"
+#l "./cake-scripts/compile.cake"
+#l "./cake-scripts/xunit.cake"
 
 var target = Argument("target", "Default");
 
 Task("Default")
-    .Description("Default Task!")
-    .IsDependentOn("PaketInstall")
-    .IsDependentOn("Compile")
-    .IsDependentOn("Xunit2");
+    .Description("Default Task!");
+     .IsDependentOn("PaketInstall")
+     .IsDependentOn("Compile")
+     .IsDependentOn("Xunit2");
 
 RunTarget(target);

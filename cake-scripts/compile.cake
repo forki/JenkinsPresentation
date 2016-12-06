@@ -26,7 +26,7 @@ private void Compile(string mode)
           .WithTarget("Build"));
     } else {
       XBuild(solution, settings => settings
-          .SetConfiguration(mode)
+          .SetConfiguration(Argument("configuration", "Release")
           .SetVerbosity(Verbosity.Minimal)
           .WithTarget("Build")));
     }
