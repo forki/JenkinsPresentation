@@ -78,10 +78,7 @@ Task("Xunit2")
 private IEnumerable<string> GetTestFiles(string rootPath)
 {
     return System.IO.Directory.GetDirectories(rootPath)
-        .Where(x => x.Contains("Test"))
-        .Select(x => x.Replace("src\\", ""))
-        .Select(x => "./src/" + x + "/bin/Debug/" + x + ".dll")
-        .Where(x => FileExists(x));
+        .Select(x => "./src/Sample.Test/bin/Debug/Sample.Test.dll");
 }
 
 private void Compile(string mode)
