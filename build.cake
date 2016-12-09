@@ -6,7 +6,7 @@ Task("Default")
     .Description("Default Task!")
     .IsDependentOn("PaketInstall")
     .IsDependentOn("Compile");
-    // .IsDependentOn("Xunit2");
+    .IsDependentOn("Xunit2");
 
 Task("PaketInstall")
     .Description("Paket Install...")
@@ -79,6 +79,7 @@ private IEnumerable<string> GetTestFiles(string rootPath)
 {
     return System.IO.Directory.GetDirectories(rootPath)
         .Where(x => x.Contains("Test"))
+        .Select(x => x.Replace("src\\", ""))
         .Select(x => "./src/" + x + "/bin/Debug/" + x + ".dll")
         .Where(x => FileExists(x));
 }
