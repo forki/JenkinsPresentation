@@ -71,15 +71,9 @@ Task("CompileRelease")
 Task("Xunit2")
   .Description("Run xUnit tests")
   .Does(() => {
-    var tests = GetTestFiles("./src");
-    XUnit2(tests);
+    XUnit2("./src/Sample.Test/bin/Debug/Sample.Test.dll");
   });
 
-private IEnumerable<string> GetTestFiles(string rootPath)
-{
-    return System.IO.Directory.GetDirectories(rootPath)
-        .Select(x => "./src/Sample.Test/bin/Debug/Sample.Test.dll");
-}
 
 private void Compile(string mode)
 {
