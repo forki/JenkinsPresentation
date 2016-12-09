@@ -70,6 +70,7 @@ Task("CompileRelease")
 
 Task("Xunit2")
   .Description("Run xUnit tests")
+  .IsDependentOn("Compile")
   .Does(() => {
     XUnit2("./src/Sample.Test/bin/Debug/Sample.Test.dll");
   });

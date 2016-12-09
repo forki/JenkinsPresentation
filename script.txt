@@ -1,0 +1,76 @@
+======
+download jenkins
+======
+  https://jenkins.io/ - grab the .war file (Jenkins provides Docker containers and other options)
+  (It is recommended to run Java 8 but Java 7 works as well)
+
+======
+initial setup and data directory
+======
+  * Run “java –jar jenkins.war”
+  * Navigate to “localhost:8080” which is the default port Jenkins runs on
+  * Jenkins comes secured right out of the box via this initial admin password
+  * You’ll then be presented with the option to customize jenkins
+  * Before this was a monotonous process of figuring out what plugins you needed. Now Jenkins comes with the ability to install suggested plugins which will include Git and others.
+  (while it is installing plugins)
+  * Jenkins stores everything in a data directory on disk. Build information, configs, workspaces, etc are all located in this data directory. No database for storing information
+  * Default location is your ~/.jenkins. If you ever needed to start fresh, just delete this directory and jenkins will start up the initial setup process. This makes it easy to backup and move to different servers without having to run through the setup again.
+  * You’ll be presented with the create a user screen. You can bypass this and use the admin account but you’ll have to remember the long admin password from the terminal. Each user will have individual user accounts and will have the ability to customize their views.
+  * There is a logout screen and next time you visit localhost:8080, you’ll be presented with a login page
+
+======
+Security
+======
+  Under manage jenkins, you’ll have options to setup security under “Configure global Security”
+  Users can be managed under “Manage Users”
+  Authentication
+    Who we are
+    Read only access is more user friendly
+  Authorization
+    What we have access to
+
+======
+New Job
+======
+  Job is synonymous with item. It is a task that we would like to run
+
+======
+Create freestyle job
+======
+  -
+
+======
+Create Pipeline
+======
+  - piplines are created from script
+  - Built in Groovy (it is like java but has a scripting feel to it), these scripts can be versioned controlled.
+  - Snippet-generator helps create the tasks in groovy
+
+======
+Why a pipeline
+======
+  Code: Pipelines are implemented in code and typically checked into source control, giving teams the ability to edit, review, and iterate upon their delivery pipeline.
+
+  Durable: Pipelines can survive both planned and unplanned restarts of the Jenkins master.
+
+  Pausable: Pipelines can optionally stop and wait for human input or approval before continuing the Pipeline run.
+
+  Versatile: Pipelines support complex real-world continuous delivery requirements, including the ability to fork/join, loop, and perform work in parallel.
+
+  Extensible: The Pipeline plugin supports custom extensions to its DSL [1] and multiple options for integration with other plugins.
+
+  Cost: Its free!
+
+  While Jenkins has always allowed rudimentary forms of chaining Freestyle Jobs together to perform sequential tasks, [2] Pipeline makes this concept a first-class citizen in Jenkins.
+
+======
+Stages
+======
+When you have complex builds Pipelines, it is useful to be able to see the progress of each stage.
+
+Who uses jenkins? Docker is a good example of a large project being handled by jenkins: https://jenkins.dockerproject.org/
+Goals
+Gain an understanding of what problems Jenkins is solving
+Create freestyle job
+Create a pipeline
+Do my best to answer questions
