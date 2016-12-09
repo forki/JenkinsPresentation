@@ -5,7 +5,7 @@ var target = Argument("target", "Default");
 Task("Default")
     .Description("Default Task!")
     .IsDependentOn("PaketInstall")
-    .IsDependentOn("Compile");
+    .IsDependentOn("Compile")
     .IsDependentOn("Xunit2");
 
 Task("PaketInstall")
