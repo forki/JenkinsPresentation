@@ -1,0 +1,65 @@
+node {
+    stage ('clean') {
+        sh 'rm -rf *'
+    }
+
+    stage('git') {
+        checkout scm
+        /* git 'https://github.com/jmeline/JenkinsPresentation.git' */
+    }
+
+    stage('paket') {
+        cake('paketinstall')
+    }
+
+    stash name: 'mystuff',
+        includes: '**'
+}
+
+stage("compile") {
+    parallel debug: {
+        //build("debug")
+        node {
+            sh "rm -rf *"
+            unstash 'mystuff'
+            sh "ls -l"
+            sh "./build.sh -t compiledebug"
+            stash name: "debug",
+                includes: '**'
+        }
+    }, release: {
+        // build("debug")
+        node("mac") {
+            sh "rm -rf *"
+            unstash 'mystuff'
+            sh "ls -l"
+            sh "./build.sh -t compilerelease"
+            stash name: "release",
+                includes: '**'
+        }
+        //build("release")
+    }
+}
+
+stage("test") {
+    node("mac") {
+        sh "rm -rf *"
+        unstash 'debug'
+        cake('Xunit2')
+    }
+}
+
+
+def build(target) {
+    node {
+        sh "rm -rf *"
+        unstash 'mystuff'
+        sh "./build.sh -t compiledebug"
+        stash name: target,
+            includes: '**'
+    }
+}
+
+def cake(command) {
+    sh "./build.sh -t ${command}"
+}
