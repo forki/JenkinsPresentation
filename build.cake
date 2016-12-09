@@ -85,8 +85,10 @@ private void Compile(string mode)
           .UseToolVersion(MSBuildToolVersion.NET46)
           .WithTarget("Build"));
     } else {
-      XBuild(solution, settings => settings
-          .SetConfiguration(mode));
+      XBuild(solution, new XBuildSettings {
+          Verbosity = Verbosity.Minimal,
+          Configuration = mode
+      });
     }
 
 }

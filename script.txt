@@ -1,4 +1,26 @@
 ======
+History
+======
+2001 – Cruise Control was notably among the first to automate the mundane tasks of software development. Meant for Java apps and
+
+Originally developed as the Hudson project in Summer 2004 @ sun by kosuke kawaguchi
+2005 Hudson released
+
+2009 Oracle acquires sun
+
+End of 2010 Tension ensued over governance
+
+Dec 2010 Oracle applies for trademark for Hudson and this pissed a lot of people off.
+
+Jan 2011 - Jenkins born from a fork off of Hudson. Community forked it and Hudson continued off
+
+2014 Kosuke left oracle and went to CloudBees as the CTO, and is an active participant in the jenkins community
+
+April 2016 - Jenkins 2 released which has the pipeline plugin as the default. The upgrade also focuses on Continuous Delivery. It is 100% backwards compatible with previous versions, so there is no reason not to upgrade.
+
+1,200 plugins that allows jenkins to integrate with almost any popular technology. It is the most dominant automation server and as of March 2016, there are more than 147,000 active installations, and over 1 million users around the world
+
+======
 download jenkins
 ======
   https://jenkins.io/ - grab the .war file (Jenkins provides Docker containers and other options)
@@ -37,7 +59,9 @@ New Job
 ======
 Create freestyle job
 ======
-  -
+  - git repository
+  - build script "./build.sh"
+  - archive artifacts
 
 ======
 Create Pipeline
@@ -46,19 +70,98 @@ Create Pipeline
   - Built in Groovy (it is like java but has a scripting feel to it), these scripts can be versioned controlled.
   - Snippet-generator helps create the tasks in groovy
 
+  Create a pipeline
+
+  lets begin to copy over what we've done from the freestyle job
+  staging gives us a high level swim lane view of our process.
+  nodes are workspaces and are separate from other nodes. (You might have this node running on a different machine.)
+  node {
+      stage("Git") { git 'https://github.com/jmeline/JenkinsPresentation.git' }
+      stage("paketinstall") { sh "./build.sh -t paketinstall" }
+      stage("compile") { sh "./build.sh -t compile" }
+      stage("XUnit2") { sh "./build.sh -t Xunit2" }
+      archiveArtifacts 'src/Sample/bin/**'
+  }
+  // running using variables
+  node {
+      stage("Git") { git 'https://github.com/jmeline/JenkinsPresentation.git'    }
+      stage("paketinstall") { cake("paketinstall") // sh "./build.sh -t paketinstall"    }
+      stage("compile") { cake("compile") // sh "./build.sh -t compile"    }
+      stage("XUnit2") { cake("Xunit2") // sh "./build.sh -t Xunit2"    }
+      archiveArtifacts 'src/Sample/bin/**'
+  }
+
+  def cake(command) { sh "./build.sh -t ${command}" }
+
+  Lets look at a second node allocation
+  When we create a job with multiple nodes in it, it'll show "part of job" on the dashboard
+  look under the build for the console output and inspect that.
+    We've got "running on master"
+
+  ======
+  Master Agent Model
+  ======
+    Master node is the computer that we’re running on
+      Each node has a pool of executors that will run our tasks
+      (default 2, but can be adjusted, typically this is the number of cpu cores)
+
+      Each executors will run nodes which contain workspaces
+
+    Unfortunately you’ll max out the capabilities of this master node and so, additional nodes are setup called Agent or slaves. If the master is filled, the tasks will be sent out to the Agent nodes. Each agent node can run multiple tasks because each agent node has a pool of executors as well.
+
+    Free style jobs didn’t need to manage nodes but the benefit with the pipeline is that with multiple nodes, execute tasks in parallel and run them on different machines, tasks that are run in serial can be stopped inbetween for human interaction such as approving a deployment. Instead of holding the executor while waiting for human interaction, it can be released to work on other tasks. Once human interaction happens, we can allocate a new node, perhaps on a new agent and continue its deployment process
+
+  =====
+  Create a new node
+  =====
+    Under the manage node, add new node.
+      remote root directory: /tmp/jenkins/agent1
+      # of executors: 2
+      label: "mac" // I do this so that if I need an agent that will run on mac.
+      usage: "only build jobs with label expression matching this node"
+
+    Under configure global security
+      make sure to enable TCP port for JNLP agents: fixed, port 50000
+      ( if the "run agent from command line isn't there, just remove the agent and recreate it. Make sure to have it say Launch agent via java web start")
+
+      Download the slave.jar
+      jump to jenkins folder
+      run the agent from the command line.
+
+node {
+    stage("Git") { git 'https://github.com/jmeline/JenkinsPresentation.git'    }
+
+    stage("paketinstall") { cake("paketinstall") }
+
+    // stash is a temporary archive and allows code to be accessible
+    // through the pipeline
+    stash name: 'mystuff', includes: '**'
+    stage("compileDebug") { cake("compileDebug") }
+    stage("compileRelease"){ cake("compileRelease") }
+    archiveArtifacts 'src/Sample/bin/**'
+}
+
+node("mac") {
+    unstash 'mystuff'
+    stage("XUnit2") { cake("Xunit2") }
+}
+
+def cake(command) {
+    sh "./build.sh -t ${command}"
+}
+
+  blue ocean
+
+  Questions
+
 ======
 Why a pipeline
 ======
   Code: Pipelines are implemented in code and typically checked into source control, giving teams the ability to edit, review, and iterate upon their delivery pipeline.
-
   Durable: Pipelines can survive both planned and unplanned restarts of the Jenkins master.
-
   Pausable: Pipelines can optionally stop and wait for human input or approval before continuing the Pipeline run.
-
   Versatile: Pipelines support complex real-world continuous delivery requirements, including the ability to fork/join, loop, and perform work in parallel.
-
   Extensible: The Pipeline plugin supports custom extensions to its DSL [1] and multiple options for integration with other plugins.
-
   Cost: Its free!
 
   While Jenkins has always allowed rudimentary forms of chaining Freestyle Jobs together to perform sequential tasks, [2] Pipeline makes this concept a first-class citizen in Jenkins.
